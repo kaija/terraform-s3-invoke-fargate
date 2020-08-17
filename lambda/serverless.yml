@@ -11,33 +11,36 @@
 #
 # Happy Coding!
 
-service: job-runner
-
+service: invoker
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
+
+custom:
+  config: ${file(config.${opt:stage, self:provider.stage}.yml)}
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
 
-custom:
-  config: ${file(config.${opt:stage, self:provider.stage}.yml)}
-
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: python3.8
   memorySize: 128
-
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
+
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - ecs:RunTask
       Resource: "*"
-
+    - Effect: "Allow"
+      Action:
+        - s3:Get*
+        - s3:List*
+      Resource: "arn:aws:s3:::tulen-fargate-demo/*"
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
 #    - Effect: "Allow"
@@ -61,24 +64,30 @@ provider:
 # you can add packaging information here
 #package:
 #  include:
-#    - include-me.js
+#    - include-me.py
 #    - include-me-dir/**
 #  exclude:
-#    - exclude-me.js
+#    - exclude-me.py
 #    - exclude-me-dir/**
 
 functions:
-  launch:
-    handler: handler.launch
+  invoke:
+    handler: invoke.fargate
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
-#    events:
+    events:
 #      - http:
 #          path: users/create
 #          method: get
 #      - websocket: $connect
-#      - s3: ${env:BUCKET}
+      - s3:
+          bucket: tulen-fargate-demo
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: test/
+            - suffix: .txt
+          existing: true
 #      - schedule: rate(10 minutes)
 #      - sns: greeter-topic
 #      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
@@ -107,7 +116,10 @@ functions:
 #            path: /hello
 
 #    Define function environment variables here
-#    environment:
+    environment:
+      REGION: ${opt:region}
+      FARGATE_CLUSTER: tulen-${opt:stage}-worker
+      FARGATE_TASK_DEF_NAME: tulen-${opt:stage}-worker
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
