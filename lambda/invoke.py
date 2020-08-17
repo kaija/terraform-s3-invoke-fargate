@@ -45,7 +45,12 @@ def run_fargate_task(s3bucket, s3object):
             ],
         },
     )
-    return str(response)
+    #return str(response)
+    return response
+
+def jsondate(o):
+    if isinstance(o, datetime):
+        return o.__str__()
 
 def fargate(event, context):
 
@@ -54,6 +59,6 @@ def fargate(event, context):
     s3bucket = event['Records'][0]['s3']['bucket']['name']
     s3object = event['Records'][0]['s3']['object']['key']
     response = run_fargate_task(s3bucket, s3object)
-    res = json.dumps(response)
+    res = json.dumps(response,default = jsondate)
     print(res)
     return response

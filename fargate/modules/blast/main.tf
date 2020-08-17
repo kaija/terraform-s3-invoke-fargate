@@ -134,6 +134,14 @@ resource "aws_ecs_task_definition" "this" {
         {
           "name": "CONN_POOL_MAX",
           "value": "2"
+        },
+        {
+          "name": "AWS_BUCKET",
+          "value": "test"
+        },
+        {
+          "name": "AWS_OBJECT",
+          "value": "test.txt"
         }
       ],
       "mountPoints": [],
