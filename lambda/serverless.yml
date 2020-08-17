@@ -40,7 +40,7 @@ provider:
       Action:
         - s3:Get*
         - s3:List*
-      Resource: "arn:aws:s3:::tulen-fargate-demo/*"
+      Resource: "arn:aws:s3:::${self:custom.config.s3bucket}/*"
     - Effect: Allow
       Action:
         - iam:PassRole
@@ -88,7 +88,7 @@ functions:
 #          method: get
 #      - websocket: $connect
       - s3:
-          bucket: tulen-fargate-demo
+          bucket: ${self:custom.config.s3bucket}
           event: s3:ObjectCreated:*
           rules:
             - prefix: test/
