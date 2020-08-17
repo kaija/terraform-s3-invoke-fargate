@@ -28,7 +28,7 @@ locals {
 
 resource "aws_ecs_cluster" "blast" {
   name               = "${var.project}-${var.environment}-worker"
-  capacity_providers = ["FARGATE", "FARGATE_SPOT"]
+  capacity_providers = ["FARGATE"]
 }
 
 resource "aws_iam_role" "task_role" {
@@ -126,7 +126,7 @@ resource "aws_ecs_task_definition" "this" {
       "essential": true,
       "startTimeout": 30,
       "stopTimeout": 30,
-      "image": "nginx:${var.image_tag}",
+      "image": "kaija/s3read:${var.image_tag}",
       "cpu": 512,
       "memory": 800,
       "memoryReservation": 128,
