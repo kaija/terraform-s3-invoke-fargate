@@ -1,2 +1,2 @@
 #!/bin/bash
-sls deploy -s dev -r us-west-2
+sls deploy --force -s dev -r us-west-2

@@ -138,7 +138,15 @@ resource "aws_ecs_task_definition" "this" {
       ],
       "mountPoints": [],
       "portMappings": [],
-      "volumesFrom": []
+      "volumesFrom": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/tulen-${var.environment}-worker",
+          "awslogs-region": "${var.aws_region}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
     }
   ]
   TASK_DEFINITION

@@ -41,6 +41,12 @@ provider:
         - s3:Get*
         - s3:List*
       Resource: "arn:aws:s3:::tulen-fargate-demo/*"
+    - Effect: Allow
+      Action:
+        - iam:PassRole
+      Resource:
+        - "arn:aws:iam::#{AWS::AccountId}:role/tulen-${opt:stage}-EcsTaskExecute"
+        - "arn:aws:iam::#{AWS::AccountId}:role/tulen-${opt:stage}-worker"
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
 #    - Effect: "Allow"
@@ -133,3 +139,6 @@ functions:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+
+plugins:
+  - serverless-pseudo-parameters
